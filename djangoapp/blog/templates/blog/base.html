@@ -7,6 +7,8 @@
 <body>
     {% include "blog/partials/_header.html" %}
 
+    <h1>Utilizando context_processor: {{ site_setup.tittle }}</h1>
+
     {% block content %}{% endblock content %}
 
     {% include "blog/partials/_pagination.html" %}
