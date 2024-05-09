@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from utils.rands import create_slug
+from utils.images import resize_image
 
 
 class Tag(models.Model):
@@ -112,7 +113,23 @@ class Post(models.Model):
     def save(self, *args, **kwargs) -> str:
         if not self.slug:
             self.slug = create_slug(self.title)
-        return super().save(*args, **kwargs)
+
+        # Get the current favicon name
+        current_cover_name = str(self.cover.name)
+
+        super_save = super().save(*args, **kwargs)
+
+        cover_changed = False
+
+        # If has a cover and the current cover name is different from the new cover name
+        if self.cover:
+            cover_changed = current_cover_name != str(self.cover.name)
+
+        # If the cover has changed, resize it
+        if cover_changed:
+            resize_image(self.cover, new_width=900)
+
+        return super_save
 
     def __str__(self) -> str:
         return self.title
