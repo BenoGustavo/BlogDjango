@@ -1,10 +1,10 @@
 from django.contrib import admin
-from blog.models import Tag, Categories, Page
+from blog.models import Tag, Categories, Page, Post
 
 
 # Register your models here.
 @admin.register(Tag)
-class tagAdmin(admin.ModelAdmin):
+class TagAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
@@ -23,7 +23,7 @@ class tagAdmin(admin.ModelAdmin):
 
 
 @admin.register(Categories)
-class categoriesAdmin(admin.ModelAdmin):
+class CategoriesAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
@@ -42,7 +42,7 @@ class categoriesAdmin(admin.ModelAdmin):
 
 
 @admin.register(Page)
-class pageAdmin(admin.ModelAdmin):
+class PageAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "title",
@@ -65,3 +65,42 @@ class pageAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_editable = ("is_published",)
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "slug",
+        "is_published",
+        "created_by",
+    )
+    list_display_links = ("title",)
+    search_fields = (
+        "id",
+        "title",
+        "slug",
+        "created_by",
+        "content",
+        "excerpt",
+        "is_published",
+    )
+    list_per_page = 50
+    ordering = ("-id",)
+    list_filter = ("categories", "title", "is_published")
+    prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "created_by",
+        "updated_by",
+    )
+    autocomplete_fields = ("categories", "tags")
+    list_editable = ("is_published",)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        obj.save()
