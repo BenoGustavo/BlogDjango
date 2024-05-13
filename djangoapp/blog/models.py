@@ -2,6 +2,27 @@ from django.contrib.auth.models import User
 from django.db import models
 from utils.rands import create_slug
 from utils.images import resize_image
+from django_summernote.models import AbstractAttachment
+
+
+class PostAttachment(AbstractAttachment):
+    def save(self, *args, **kwargs) -> str:
+        # Get the current favicon name
+        current_file_name = str(self.file.name)
+
+        super_save = super().save(*args, **kwargs)
+
+        file_changed = False
+
+        # If has a file and the current file name is different from the new file name
+        if self.file:
+            file_changed = current_file_name != str(self.file.name)
+
+        # If the file has changed, resize it
+        if file_changed:
+            resize_image(self.file, new_width=900)
+
+        return super_save
 
 
 class Tag(models.Model):
@@ -76,7 +97,8 @@ class Post(models.Model):
     slug = models.SlugField(
         unique=True, default=None, null=True, blank=True, max_length=50
     )
-    excerpt = models.models.CharField(max_length=150)
+    excerpt = models.CharField(max_length=150)
+    content = models.TextField()
     is_published = models.BooleanField(default=False, help_text="Publish this post?")
     cover = models.ImageField(upload_to="posts/%Y/%m/", default="", blank=True)
     cover_in_post_content = models.BooleanField(
@@ -100,7 +122,7 @@ class Post(models.Model):
         related_name="post_updated_by",
     )
 
-    category = models.ForeignKey(
+    categories = models.ForeignKey(
         Categories,
         on_delete=models.CASCADE,
         null=True,
