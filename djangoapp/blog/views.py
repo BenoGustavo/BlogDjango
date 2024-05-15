@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from blog.models import Post
+from django.db.models import Q
 
 PER_PAGE = 9
 
@@ -65,6 +66,23 @@ def tag(request, slug):
         "blog/pages/index.html",
         {
             "page_obj": page_obj,
+        },
+    )
+
+
+def search(request):
+    search = request.GET.get("search").strip()
+    posts = Post.objects.get_published().filter(
+        Q(title__icontains=search)
+        | Q(content__icontains=search)
+        | Q(excerpt__icontains=search)
+    )[:PER_PAGE]
+
+    return render(
+        request,
+        "blog/pages/index.html",
+        {
+            "page_obj": posts,
         },
     )
 
