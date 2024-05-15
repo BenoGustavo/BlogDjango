@@ -23,6 +23,6 @@ app_name = "blog"
 
 urlpatterns = [
     path("", index, name="index"),
-    path("post/", post, name="index"),
-    path("page/", page, name="index"),
+    path("post/<slug:slug>/", post, name="post"),
+    path("page/", page, name="page"),
 ]
