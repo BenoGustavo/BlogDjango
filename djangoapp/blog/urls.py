@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from blog.views import index, post, page
+from blog.views import index, post, page, created_by, category, tag
 
 app_name = "blog"
 
@@ -25,4 +25,7 @@ urlpatterns = [
     path("", index, name="index"),
     path("post/<slug:slug>/", post, name="post"),
     path("page/", page, name="page"),
+    path("created_by/<int:author_id>/", created_by, name="created_by"),
+    path("category/<slug:slug>/", category, name="category"),
+    path("tag/<slug:slug>/", tag, name="tag"),
 ]
