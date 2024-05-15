@@ -1,6 +1,7 @@
 from django.contrib import admin
 from blog.models import Tag, Categories, Page, Post
 from django_summernote.admin import SummernoteModelAdmin
+from django.urls import reverse
 
 
 # Register your models here.
@@ -98,9 +99,18 @@ class PostAdmin(SummernoteModelAdmin):
         "updated_at",
         "created_by",
         "updated_by",
+        "link",
     )
     autocomplete_fields = ("categories", "tags")
     list_editable = ("is_published",)
+
+    def link(self, obj):
+        if not obj.pk:
+            return "Save the post first"
+
+        url = obj.get_absolute_url()
+
+        return url
 
     def save_model(self, request, obj, form, change):
         if not change:
