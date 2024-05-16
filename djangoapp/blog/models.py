@@ -64,10 +64,17 @@ class Categories(models.Model):
         return self.name
 
 
+class PageManager(models.Manager):
+    def get_published(self):
+        return self.filter(is_published=True).order_by("-pk")
+
+
 class Page(models.Model):
     class Meta:
         verbose_name = "Page"
         verbose_name_plural = "Pages"
+
+    objects = PageManager()
 
     title = models.CharField(
         max_length=50,
@@ -79,6 +86,11 @@ class Page(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse("blog:index")
+        return reverse("blog:page", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs) -> str:
         if not self.slug:
