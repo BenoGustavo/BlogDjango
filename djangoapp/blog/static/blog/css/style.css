@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root {
     /* Colors */
-    --_clr-base-hue: 213;
+    --_clr-base-hue: 277;
     --_clr-primary: var(--_clr-base-hue) 100%;
     --_clr-gray: var(--_clr-base-hue) 10%;
 
@@ -25,8 +27,8 @@
     --clr-gray-dkst: var(--_clr-gray) 10%;
 
     /* Font-family */
-    --ff-regular: Georgia, 'Times New Roman', Times, serif;
-    --ff-headings: Georgia, 'Times New Roman', Times, serif;
+    --ff-regular: "Poppins", Georgia, 'Times New Roman', Times, serif;
+    --ff-headings: "Poppins", Georgia, 'Times New Roman', Times, serif;
     --ff-mono: 'Courier New', Courier, monospace;
 
     /* Font-Sizes */
@@ -78,6 +80,7 @@ body {
     background-color: hsl(var(--clr-white));
     color: hsl(var(--clr-black));
     font-size: 20px;
+    min-height: 100vh;
     /* Fallback value */
     font-size: var(--fs-base);
     font-family: var(--ff-regular);
