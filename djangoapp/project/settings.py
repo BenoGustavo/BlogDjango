@@ -12,10 +12,15 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR.parent / "data" / "web"
+ENV_DIR = BASE_DIR.parent / "dotenv_files" / ".env"
+
+# Load the environment variables from the .env file
+load_dotenv(str(ENV_DIR))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -79,6 +84,22 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
+
+print(
+    "ENGINE",
+    os.getenv("DB_ENGINE", "change-me"),
+    "NAME",
+    os.getenv("POSTGRES_DB", "change-me"),
+    "USER",
+    os.getenv("POSTGRES_USER", "change-me"),
+    "PASSWORD",
+    os.getenv("POSTGRES_PASSWORD", "change-me"),
+    "HOST",
+    os.getenv("POSTGRES_HOST", "change-me"),
+    "PORT",
+    os.getenv("POSTGRES_PORT", "change-me"),
+)
 
 DATABASES = {
     "default": {

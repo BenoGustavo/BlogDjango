@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.17
+FROM python:3.12-alpine3.19
 LABEL maintainer="gustavoleandrogorges@gmail.com"
 
 # Essa variável de ambiente é usada para controlar se o Python deve 
@@ -21,31 +21,62 @@ WORKDIR /djangoapp
 # É a porta que vamos usar para o Django.
 EXPOSE 8000
 
+# Instala as dependências necessárias para compilar Pillow
+RUN apk add --no-cache \
+    build-base \
+    jpeg-dev \
+    zlib-dev \
+    freetype-dev \
+    lcms2-dev \
+    openjpeg-dev \
+    tiff-dev \
+    tk-dev \
+    tcl-dev \
+    harfbuzz-dev \
+    fribidi-dev \
+    libimagequant-dev
+
 # RUN executa comandos em um shell dentro do container para construir a imagem. 
 # O resultado da execução do comando é armazenado no sistema de arquivos da 
 # imagem como uma nova camada.
 # Agrupar os comandos em um único RUN pode reduzir a quantidade de camadas da 
 # imagem e torná-la mais eficiente.
-RUN python -m venv /venv && \
-    /venv/bin/pip install --upgrade pip && \
-    /venv/bin/pip install -r /djangoapp/requirements.txt && \
-    adduser --disabled-password --no-create-home duser && \
-    mkdir -p /data/web/static && \
+# RUN python -m venv /venv && \
+#     /venv/bin/pip install --upgrade pip && \
+#     /venv/bin/pip install -r /djangoapp/requirements.txt && \
+#     adduser --disabled-password --no-create-home duser && \
+#     mkdir -p /data/web/static && \
+#     mkdir -p /data/web/media && \
+#     chown -R duser:duser /venv && \
+#     chown -R duser:duser /data/web/static && \
+#     chown -R duser:duser /data/web/media && \
+#     chmod -R 777 /data && \
+#     chmod -R 755 /data/web/static && \
+#     chmod -R 755 /data/web/media && \
+#     chmod  -R 755 /data/web/static/admin && \
+#     chmod -R +x /scripts
+
+# Cria e ativa o ambiente virtual
+RUN python -m venv /venv
+
+# Atualiza o pip
+RUN /venv/bin/pip install --upgrade pip
+
+# Instala as dependências do projeto
+RUN /venv/bin/pip install -r /djangoapp/requirements.txt
+
+# Cria os diretórios necessários e ajusta permissões
+RUN mkdir -p /data/web/static && \
     mkdir -p /data/web/media && \
-    chown -R duser:duser /venv && \
-    chown -R duser:duser /data/web/static && \
-    chown -R duser:duser /data/web/media && \
-    chmod -R 777 /data && \
-    chmod -R 755 /data/web/static && \
-    chmod -R 755 /data/web/media && \
+    mkdir -p /data/web/static/admin && \
+    chmod -R 777 /data/web/static && \
+    chmod -R 777 /data/web/media && \
+    chmod -R 777 /data/web/static/admin && \
     chmod -R +x /scripts
 
 # Adiciona a pasta scripts e venv/bin 
 # no $PATH do container.
 ENV PATH="/scripts:/venv/bin:$PATH"
-
-# Muda o usuário para duser
-USER duser
 
 # Executa o arquivo scripts/commands.sh
 CMD ["commands.sh"]
